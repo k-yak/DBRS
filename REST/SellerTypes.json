@@ -1,0 +1,21 @@
+{
+  "@odata.context":"http://vsrv-web/LGComWebAPI/odata/$metadata#SellerTypes","value":[
+    {
+      "id":1,"code":"LG1","name":"Appareil Locomoteur","isActive":false,"isCallCenter":false
+    },{
+      "id":2,"code":"LG2","name":"Rhumatologie","isActive":false,"isCallCenter":false
+    },{
+      "id":3,"code":"LG3","name":"Dermatologie","isActive":false,"isCallCenter":false
+    },{
+      "id":4,"code":"LG4","name":"Fertilit\u00e9","isActive":false,"isCallCenter":false
+    },{
+      "id":5,"code":"VP","name":"Vendeurs Promogen","isActive":true,"isCallCenter":false
+    },{
+      "id":6,"code":"CALL_ALLOGA","name":"Call Center Alloga","isActive":false,"isCallCenter":true
+    },{
+      "id":7,"code":"SIEGE","name":"Si\u00e8ge","isActive":true,"isCallCenter":false
+    },{
+      "id":8,"code":"CALL_PROMOGEN","name":"Call Center Promogen","isActive":true,"isCallCenter":true
+    }
+  ]
+}
