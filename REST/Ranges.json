@@ -1,0 +1,109 @@
+{
+  "@odata.context":"http://vsrv-web/LGComWebAPI/odata/$metadata#Ranges","value":[
+    {
+      "id":490,"name":"Chondrosulf","productId":490
+    },{
+      "id":491,"name":"Flector","productId":491
+    },{
+      "id":492,"name":"Rhumato-Traumato","productId":492
+    },{
+      "id":493,"name":"Sinovial","productId":493
+    },{
+      "id":494,"name":"Ialugen Cicatrisation","productId":494
+    },{
+      "id":495,"name":"Dermatologie","productId":495
+    },{
+      "id":496,"name":"Ialuset","productId":496
+    },{
+      "id":497,"name":"Codotussyl","productId":497
+    },{
+      "id":498,"name":"Myopl\u00e8ge","productId":498
+    },{
+      "id":499,"name":"Fostimon","productId":499
+    },{
+      "id":500,"name":"Genac","productId":500
+    },{
+      "id":501,"name":"Alepsal","productId":501
+    },{
+      "id":502,"name":"Solmucol","productId":502
+    },{
+      "id":503,"name":"Remex ","productId":503
+    },{
+      "id":504,"name":"Inofolic","productId":504
+    },{
+      "id":505,"name":"Betesil","productId":505
+    },{
+      "id":506,"name":"Noxidoxi","productId":506
+    },{
+      "id":507,"name":"Noxidoxi Masque","productId":507
+    },{
+      "id":508,"name":"Noxidoxi Gratuit","productId":508
+    },{
+      "id":509,"name":"Croma Olixia","productId":509
+    },{
+      "id":510,"name":"Chondrosulf OTC","productId":510
+    },{
+      "id":511,"name":"Ibsium","productId":511
+    },{
+      "id":512,"name":"Durolane","productId":512
+    },{
+      "id":513,"name":"Sil\u00e9o","productId":513
+    },{
+      "id":514,"name":"Croma Gratuit","productId":514
+    },{
+      "id":515,"name":"Flector par 10","productId":515
+    },{
+      "id":517,"name":"Densmore vision","productId":517
+    },{
+      "id":518,"name":"Densmore Prescription","productId":518
+    },{
+      "id":519,"name":"Densmore Sante","productId":519
+    },{
+      "id":520,"name":"Densmore Hors Promotion","productId":520
+    },{
+      "id":521,"name":"Neuripl\u00e8ge Activ","productId":521
+    },{
+      "id":522,"name":"Crescina","productId":522
+    },{
+      "id":523,"name":"Zeocal","productId":523
+    },{
+      "id":524,"name":"PharmaLiquid","productId":524
+    },{
+      "id":525,"name":"Noxidoxi Serum","productId":525
+    },{
+      "id":526,"name":"Ialugen Advance ","productId":526
+    },{
+      "id":528,"name":"LG Gratuit","productId":528
+    },{
+      "id":529,"name":"Zeocal Gratuit","productId":529
+    },{
+      "id":530,"name":"PharmaLiquid Gratuit","productId":530
+    },{
+      "id":531,"name":"Dermatologie","productId":531
+    },{
+      "id":532,"name":"Kendall Alginate","productId":532
+    },{
+      "id":533,"name":"FostimonKit","productId":533
+    },{
+      "id":534,"name":"Effigel","productId":534
+    },{
+      "id":535,"name":"Crescina Gratuit","productId":535
+    },{
+      "id":536,"name":"Densmore Gratuit","productId":536
+    },{
+      "id":538,"name":"Airplus","productId":538
+    },{
+      "id":539,"name":"Kendall Foam","productId":539
+    },{
+      "id":540,"name":"FTG","productId":540
+    },{
+      "id":541,"name":"Densmore Hygi\u00e8ne","productId":541
+    },{
+      "id":543,"name":"IALUGEN FAMILY","productId":543
+    },{
+      "id":545,"name":"Implus Gratuit","productId":572
+    },{
+      "id":546,"name":"Frais de Port","productId":546
+    }
+  ]
+}
