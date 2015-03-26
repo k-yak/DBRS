@@ -6,7 +6,7 @@ require.config({
 });
 
 require(["jquery", "dbrs"], function($, dbrs) {
-    var db;
+    var db, model, obj;
     $('#createDB').click(function(){
         db = dbrs.createDB('CRM');
     });
@@ -33,7 +33,34 @@ require(["jquery", "dbrs"], function($, dbrs) {
     
     $('#createModel').click(function(){
         model = db.createModel();
-        var a = new model.SellerTypes();
-        model.SellerTypes.getBy('id', 1, function(){});
+    });
+    
+    $('#getOneButton').click(function(){
+        var a = model.Ranges.getOneBy(
+            $('#searchfield').val(),
+            $('#searchvalue').val(),
+            function(a){obj=a;console.log(a);}
+        );
+    });
+        
+    $('#getManyButton').click(function(){
+        model.Ranges.getManyBy(
+            $('#searchfield').val(),
+            $('#searchvalue').val(),
+            function(a){console.log(a);}
+        );
+    });
+    
+    $('#save').click(function(){
+        obj.save();
+    }); 
+    
+    $('#remove').click(function(){
+        obj.remove();
+    });
+    
+    $('#createObject').click(function(){
+        obj = new model.Ranges();
+        console.log(obj);
     });
 });

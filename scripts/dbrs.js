@@ -46,6 +46,28 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
             console.log('success clearing table : ' + JSON.stringify(e));
     }
     
+    /**** Utils Function ****/
+    
+    function prepareForSql(val) {
+        var ret = '';
+        if(typeof(val) === 'boolean') val = + val;
+        if(typeof(val) === 'string') ret += '"';
+        if(typeof(val) === 'undefined') ret += 'NULL';
+        else ret += val;
+        if(typeof(val) === 'string') ret += '"';
+        return ret;
+    }
+    
+    function guid() {
+      function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      }
+      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+    }
+    
     /**** DBRS SCOPE ****/
     
     function createDB(curDB) {
@@ -58,7 +80,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
                 databases[curDB].comment, 
                 databases[curDB].minSize
             );
-            db.name = curDB;
+            db.DBRSDBName = curDB;
 
             for(i in databases[curDB].tables) {
                 var tableFields = '(';
@@ -68,7 +90,8 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
                     tableFields += j + ' ' + databases[curDB].tables[i][j];
                     k++;
                 }
-                tableFields += ')';
+                tableFields += ', DBRS_guid TEXT';
+                tableFields += ', DBRS_status TEXT default "UTD")';
 
                 var tableName = databases[curDB].tables[i];
                 if(inDBConf.config.mode === 'verbose')
@@ -107,7 +130,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
                 databases[curDB].comment, 
                 databases[curDB].minSize
             );
-            db.name = curDB;
+            db.DBRSDBName = curDB;
             
             if(inDBConf.config.mode === 'verbose')
                 console.log('OPEN DATABASE ' + curDB);
@@ -139,7 +162,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
     
     function dropTables(){
         var self = this;
-        for(var tableName in databases[this.name].tables)
+        for(var tableName in databases[this.DBRSDBName].tables)
             dropTable(tableName, self);
     }
     
@@ -188,18 +211,14 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
                                             insertFields += ',';
                                             tableFields += ',';
                                         }
-
-                                        if(typeof(line[j]) === 'boolean') line[j] = + line[j];
-                                        if(typeof(line[j]) === 'string') insertFields += '"';
-                                        if(typeof(line[j]) === 'undefined') insertFields += 'NULL';
-                                        else insertFields += line[j];
-                                        if(typeof(line[j]) === 'string') insertFields += '"';
-
+                                        
+                                        insertFields += prepareForSql(line[j]);
+                                        
                                         tableFields += j;
                                         k++;
                                     }
-                                    insertFields += ')';
-                                    tableFields += ')';
+                                    tableFields += ',DBRS_guid)';
+                                    insertFields += ',' + prepareForSql(guid()) + ')';
 
                                     if(inDBConf.config.mode === 'verbose')
                                         console.log('INSERT INTO ' + curTableNameC  + ' ' + tableFields + ' values ' + insertFields);
@@ -245,7 +264,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         var first;
                     
         $.ajax({
-            url: requests[self.name].ping,
+            url: requests[self.DBRSDBName].ping,
             type: 'HEAD',
             async: false,
             data: {},
@@ -259,55 +278,166 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         });
         
         if(inDBConf.config.mode === 'verbose')
-            console.log('accessibility of : ' + requests[self.name].ping + ' => ' + ret);
+            console.log('accessibility of : ' + requests[self.DBRSDBName].ping + ' => ' + ret);
         
         return ret;
     }
     
     function createModel() {
         var self = this;
-        var curDB = databases[self.name];
+        var curDB = databases[self.DBRSDBName];
         for(var curTableName in curDB.tables) {
             var curTable = curDB.tables[curTableName];
-            model[curTableName] = function() {};
+            model[curTableName] = function() {
+                this.DBRS_guid = guid();
+                this.DBRS_status = 'NEW';
+            };
             for(var curPropName in curTable)
             {
                 model[curTableName].prototype[curPropName] = null;
             }
             model[curTableName].DBRSdb = self;
-            model[curTableName].DBRSname = curTableName;
+            model[curTableName].prototype.DBRSdb = self;
+            model[curTableName].DBRSTableName = curTableName;
+            model[curTableName].prototype.DBRSTableName = curTableName;
+            model[curTableName].prototype.DBRS_guid = '';
+
             createClassMethods(model[curTableName]);
             createObjectMethods(model[curTableName]);
         }
-        
+        if(inDBConf.config.mode === 'verbose')
+            console.log('Model created');
         return model;
     }
     
     function createClassMethods(metaClass) {
         //getAll
+        metaClass.getAll = getAll;
         //getBy
-        metaClass.getBy = getBy;
+        metaClass.getOneBy = getOneBy;
+        metaClass.getManyBy = getManyBy;
         //update
         //create
     }
     
     function createObjectMethods(metaClass) {
         //save
+        metaClass.prototype.save = save;
         //update
+        //remove
+        metaClass.prototype.remove = remove;
     }
     
     /**** CLASS SCOPE ****/
     
-    function getBy(fieldName, value, callback) {
+    function getOneBy(fieldName, value, callback) {
         var self = this;
         self.DBRSdb.transaction(function (tx) {
-            console.log('SELECT * FROM ' + self.DBRSname + ' WHERE ' + fieldName + ' = ' + value);
-            tx.executeSql('SELECT * FROM ' + self.DBRSname + ' WHERE ' + fieldName + ' = ' + value, [], function (tx, results) {
-                //alert(JSON.stringify(results));
+            if(inDBConf.config.mode === 'verbose')
+                console.log('SELECT * FROM ' + self.DBRSTableName + ' WHERE ' + fieldName + ' LIKE ' + prepareForSql(value) + 'AND DBRS_status <> "RMV"');
+            
+            tx.executeSql('SELECT * FROM ' + self.DBRSTableName + ' WHERE ' + fieldName + ' LIKE ' + prepareForSql(value) + 'AND DBRS_status <> "RMV"', [], function (tx, results) {
+                var ret = null;
+                var len = results.rows.length, i;
+                if(len !== 0 ) {
+                    ret = new self();
+                    for(var i in results.rows.item(0)) {
+                        ret[i] = results.rows.item(0)[i];
+                    }
+                }
+                callback(ret);
+            }, null);
+        });
+    }
+    
+    function getManyBy(fieldName, value, callback) {
+        var self = this;
+        self.DBRSdb.transaction(function (tx) {
+            if(inDBConf.config.mode === 'verbose')
+                console.log('SELECT * FROM ' + self.DBRSTableName + ' WHERE ' + fieldName + ' LIKE ' + prepareForSql(value) + 'AND DBRS_status <> "RMV"');
+            
+            tx.executeSql('SELECT * FROM ' + self.DBRSTableName + ' WHERE ' + fieldName + ' LIKE ' + prepareForSql(value) + 'AND DBRS_status <> "RMV"', [], function (tx, results) {
+                var ret = [];
+                var len = results.rows.length, i;
+                for(var i = 0 ; i < len; i++ ) {
+                    ret.push(new self());
+                    for(var j in results.rows.item(i)) {
+                        ret[i][j] = results.rows.item(i)[j];
+                    }
+                }
+                callback(ret);
+            }, null);
+        });
+    }
+    
+    function getAll(callback) {
+        var self = this;
+        self.DBRSdb.transaction(function (tx) {
+            if(inDBConf.config.mode === 'verbose')
+                console.log('SELECT * FROM ' + self.DBRSTableName + 'WHERE DBRS_status <> "RMV"');
+            
+            tx.executeSql('SELECT * FROM ' + self.DBRSTableName + 'WHERE DBRS_status <> "RMV"', [], function (tx, results) {
+                var ret = [];
+                var len = results.rows.length, i;
+                for(var i = 0 ; i < len; i++ ) {
+                    ret.push(new self());
+                    for(var j in results.rows.item(i)) {
+                        ret[i][j] = results.rows.item(i)[j];
+                    }
+                }
+                callback(ret);
             }, null);
         });
     }
     /**** OBJECT SCOPE ****/
+    
+    function save(){
+        var self = this;
+        var saveType = 'UPD';
+        self.DBRSdb.transaction(function (tx) {
+            if(inDBConf.config.mode === 'verbose')
+                console.log('SELECT * FROM ' + self.DBRSTableName + ' WHERE DBRS_guid = ' + prepareForSql(self.DBRS_guid));
+            
+            tx.executeSql('SELECT * FROM ' + self.DBRSTableName + ' WHERE DBRS_guid = ' + prepareForSql(self.DBRS_guid), [], function (tx, results) {
+                var ret = null;
+                var len = results.rows.length;
+                if(len === 0 ) {
+                    //createOne;
+                }
+                else {
+                    updateOne(self, tx);
+                }
+            }, null);
+        });
+    }
+    
+    function remove(){
+        var self = this;
+        self.DBRSdb.transaction(function (tx) {
+            updateOne(self, tx, 'RMV')
+        });
+    }
+    
+    function updateOne(self, tx, saveType) {
+        if(typeof(saveType) === 'undefined') saveType = 'UPD';
+        var updateFields = '';                    
+
+            var k = 0;
+            for(j in databases[self.DBRSdb.DBRSDBName].tables[self.DBRSTableName]) {
+                if(k !== 0) {
+                    updateFields += ',';
+                }
+
+                updateFields += j + ' = ';
+                updateFields += prepareForSql(self[j]);
+                k++;
+            }
+            updateFields += ',DBRS_status = "' + saveType + '"';
+
+            if(inDBConf.config.mode === 'verbose')
+                console.log('UPDATE ' + self.DBRSTableName + ' SET ' + updateFields + ' WHERE DBRS_guid = ' + prepareForSql(self.DBRS_guid));
+            tx.executeSql('UPDATE ' + self.DBRSTableName + ' SET ' + updateFields + ' WHERE DBRS_guid = ' + prepareForSql(self.DBRS_guid), [], function (tx, results) {});
+    }
     
     /**** return DBRS SCOPE ****/
     

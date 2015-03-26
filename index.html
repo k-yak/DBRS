@@ -7,13 +7,36 @@
 </head>
 <body>
     <h1>My test</h1>
-    <button id="createDB">createDB</button>
-    <button id="openDB">openDB</button>
-    <button id="updateAll">updateAll</button>
-    <button id="clearAll">clearAll</button>
-    <button id="dropDB">dropDB</button>
-    <button id="ping">ping</button>
-    <button id="createModel">createModel</button>
+    <div>
+        <h2>DBRS Scope</h2>
+        <button id="createDB">createDB</button>
+        <button id="openDB">openDB</button>
+    </div>
+    <div>
+        <h2>DB Scope</h2>
+        <button id="updateAll">updateAll</button>
+        <button id="clearAll">clearAll</button>
+        <button id="dropDB">dropDB</button>
+        <button id="ping">ping</button>
+        <button id="createModel">createModel</button>
+    </div>
+    <div>
+        <h2>Class Scope</h2>
+        <div>
+            <input type="text" placeholder="field" id="searchfield">
+            <input type="text" placeholder="value" id="searchvalue">
+            <button id="getOneButton">getOneBy</button>
+            <button id="getManyButton">getManyBy</button>
+        </div>
+        <div>
+            <button id="createObject">createObject</button>
+        </div>
+    </div>
+    <div>
+        <h2>ObjectScope</h2>
+        <button id="save">save</button>
+        <button id="remove">remove</button>
+    </div>
     <script data-main="scripts/main" src="scripts/libs/require.js"></script>
 </body>
 </html>
