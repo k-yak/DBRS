@@ -1,6 +1,7 @@
 # DBRS
 
 Database REST Synchronise
+
 Javascript ORM and synchronisation tool with REST API
 
 ##TODO
@@ -10,6 +11,7 @@ Javascript ORM and synchronisation tool with REST API
 * var dbs = dbrs.openDBs() ✔
 * var db = dbrs.createDB(name) ✔
 * var dbs = dbrs.createDBs() ✔
+
 ###DB SCOPE
 * db.updateAll() ✔
 * db.clearAll() ✔
@@ -18,12 +20,14 @@ Javascript ORM and synchronisation tool with REST API
 * db.dropTables() ✔
 * var model = db.createModel() ✔
 * db.sql('SELECT * FROM table', onSuccess, on Error) ✔
+
 ###CLASS SCOPE
 * var obj = model.MyClass.getOneBy(fieldName, value, callback) ✔
 * var objs = model.MyClass.getManyBy(fieldName, value, callback) ✔
 * var objs = model.MyClass.getAll(callback) ✔
 * var obj = new model.MyClass() ✔
 * model.MyClass.update() ...
+
 ###OBJECT SCOPE 
 * obj.save() ✔
 * obj.remove() ✔
