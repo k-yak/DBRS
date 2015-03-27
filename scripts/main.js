@@ -59,8 +59,18 @@ require(["jquery", "dbrs"], function($, dbrs) {
         obj.remove();
     });
     
+    $('#clone').click(function(){
+        var obj2 = obj.clone();
+        console.log(obj);
+        console.log(obj2);
+    });
+    
     $('#createObject').click(function(){
         obj = new model.Ranges();
         console.log(obj);
+    });
+    
+    $('#update').click(function(){
+        obj.update();
     });
 });

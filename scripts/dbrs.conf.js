@@ -31,7 +31,31 @@ define({
             SellerTypes: {
                 getAll: {
                     url: 'REST/SellerTypes.json',
+                    args: ['id'],
                     type: 'GET',
+                    dataType: 'json',
+                    async: true,
+                    data: {},
+                    contentType: 'application/json; charset=UTF-8',
+                    subCollection: 'value',
+                    success: function(){},
+                    error: function(){}
+                },
+                patch: {
+                    url: 'REST/SellerTypes.json(?)',
+                    args: ['id'],
+                    type: 'PATCH',
+                    dataType: 'json',
+                    async: true,
+                    data: {},
+                    contentType: 'application/json; charset=UTF-8',
+                    subCollection: 'value',
+                    success: function(){},
+                    error: function(){}
+                },
+                post: {
+                    url: 'REST/SellerTypes.json',
+                    type: 'POST',
                     dataType: 'json',
                     async: true,
                     data: {},
@@ -45,6 +69,29 @@ define({
                 getAll: {
                     url: 'REST/Ranges.json',
                     type: 'GET',
+                    dataType: 'json',
+                    async: true,
+                    data: {},
+                    contentType: 'application/json; charset=UTF-8',
+                    subCollection: 'value',
+                    success: function(){},
+                    error: function(){}
+                },
+                patch: {
+                    url: 'REST/Ranges.json(?)',
+                    args: ['id'],
+                    type: 'PATCH',
+                    dataType: 'json',
+                    async: true,
+                    data: {},
+                    contentType: 'application/json; charset=UTF-8',
+                    subCollection: 'value',
+                    success: function(){},
+                    error: function(){}
+                },
+                post: {
+                    url: 'REST/Ranges.json',
+                    type: 'POST',
                     dataType: 'json',
                     async: true,
                     data: {},

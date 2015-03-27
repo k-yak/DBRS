@@ -155,6 +155,8 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         if(typeof(self) === 'undefined')
             var self = this;
         
+        if(inDBConf.config.mode === 'verbose')
+                console.log('DROP table ' + tableName);
         self.transaction(function(tx) {
             tx.executeSql('DROP table ' + tableName, [], onSuccessDrop, onErrorDrop);
         });
@@ -172,7 +174,29 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         db.dropTable = dropTable;
         db.dropTables = dropTables;
         db.ping = ping;
-        db.createModel = createModel
+        db.createModel = createModel;
+        db.sql = sql;
+    }
+    
+    function createURL(url, args, obj) {
+        var urlsParts = url.split('?');
+        var ret = '';
+        if(typeof(args) === 'undefined') return url;
+
+        for(var i in urlsParts) {
+            ret += urlsParts[i];
+            if(typeof(args[i]) !== 'undefined')
+                ret += obj[args[i]];
+        }
+        return ret;
+    }
+    
+    function prepareData(data) {
+        for(var i in data) {
+            if(i.split('DBRS_').length > 1)
+                delete data[i];
+        }
+        return JSON.stringify(data);
     }
     
     /**** DB SCOPE ****/
@@ -186,7 +210,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
                 
                 (function(curDBNameC, curDBC, curTableNameC, curTableC){
                     $.ajax({
-                        url: requests[curDBNameC][curTableNameC].getAll.url,
+                        url: createURL(requests[curDBNameC][curTableNameC].getAll.url),
                         type: requests[curDBNameC][curTableNameC].getAll.type,
                         dataType: requests[curDBNameC][curTableNameC].getAll.dataType,
                         async: requests[curDBNameC][curTableNameC].getAll.async,
@@ -264,7 +288,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         var first;
                     
         $.ajax({
-            url: requests[self.DBRSDBName].ping,
+            url: createURL(requests[self.DBRSDBName].ping),
             type: 'HEAD',
             async: false,
             data: {},
@@ -292,6 +316,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
                 this.DBRS_guid = guid();
                 this.DBRS_status = 'NEW';
             };
+            
             for(var curPropName in curTable)
             {
                 model[curTableName].prototype[curPropName] = null;
@@ -324,8 +349,22 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         //save
         metaClass.prototype.save = save;
         //update
+        metaClass.prototype.update = update;
         //remove
         metaClass.prototype.remove = remove;
+        //clone
+        metaClass.prototype.clone = clone;
+    }
+    
+        
+    function sql(command, callbackSuccess, callbackError) {
+        var self = this;
+        if(inDBConf.config.mode === 'verbose')
+            console.log(command);
+        
+        self.transaction(function(tx) {
+            tx.executeSql(command, [], callbackSuccess, callbackError);
+        });
     }
     
     /**** CLASS SCOPE ****/
@@ -402,7 +441,7 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
                 var ret = null;
                 var len = results.rows.length;
                 if(len === 0 ) {
-                    //createOne;
+                    createOne(self, tx);
                 }
                 else {
                     updateOne(self, tx);
@@ -416,6 +455,14 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         self.DBRSdb.transaction(function (tx) {
             updateOne(self, tx, 'RMV')
         });
+    }
+    
+    function clone(){
+        var self = this;
+        var copy = $.extend({}, self)
+        copy.DBRS_guid = guid();
+        copy.DBRS_status = 'NEW';
+        return copy;
     }
     
     function updateOne(self, tx, saveType) {
@@ -437,6 +484,86 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
             if(inDBConf.config.mode === 'verbose')
                 console.log('UPDATE ' + self.DBRSTableName + ' SET ' + updateFields + ' WHERE DBRS_guid = ' + prepareForSql(self.DBRS_guid));
             tx.executeSql('UPDATE ' + self.DBRSTableName + ' SET ' + updateFields + ' WHERE DBRS_guid = ' + prepareForSql(self.DBRS_guid), [], function (tx, results) {});
+    }
+    
+    function createOne(self, tx) {
+        var saveType = 'NEW';
+        var insertFields = '(';                    
+        var tableFields = '(';
+
+        var k = 0;
+        for(j in databases[self.DBRSdb.DBRSDBName].tables[self.DBRSTableName]) {
+            if(k !== 0) {
+                insertFields += ',';
+                tableFields += ',';
+            }
+
+            console.log(self);
+            insertFields += prepareForSql(self[j]);
+
+            tableFields += j;
+            k++;
+        }
+        tableFields += ',DBRS_status)';
+        insertFields += ',' + prepareForSql(saveType) + ')';
+
+        if(inDBConf.config.mode === 'verbose')
+            console.log('INSERT INTO ' + self.DBRSTableName  + ' ' + tableFields + ' values ' + insertFields);
+
+        tx.executeSql('INSERT OR REPLACE INTO ' + self.DBRSTableName + ' ' + tableFields + ' values ' + insertFields,
+                      []);
+    }
+    
+    function update() {
+        var self = this;
+        if(self.DBRS_status === 'UPD') {
+            $.ajax({
+                url: createURL(
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.url,
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.args,
+                    self
+                ),
+                type: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.type,
+                dataType: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.dataType,
+                async: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.async,
+                data: prepareData(self),
+                contentType: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.contentType,
+
+                success: function (result) {
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.success();
+                },
+                error: function (e) {
+                    if(inDBConf.config.mode === 'verbose')
+                        console.log('error : ' + JSON.stringify(e))
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].patch.error();
+                }
+            });
+        }
+        else if(self.DBRS_status === 'NEW') {
+            $.ajax({
+                url: createURL(
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.url,
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.args,
+                    self
+                ),
+                type: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.type,
+                dataType: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.dataType,
+                async: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.async,
+                data: prepareData(self),
+                contentType: requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.contentType,
+
+                success: function (result) {
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.success();
+                },
+                error: function (e) {
+                    if(inDBConf.config.mode === 'verbose')
+                        console.log('error : ' + JSON.stringify(e))
+                    requests[self.DBRSdb.DBRSDBName][self.DBRSTableName].post.error();
+                }
+            });
+        }else if(self.DBRS_status === 'UTD') {
+            //TODO
+        }
     }
     
     /**** return DBRS SCOPE ****/

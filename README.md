@@ -17,6 +17,7 @@ Javascript ORM and synchronisation tool with REST API
 * db.dropTable(tableName) ✔
 * db.dropTables() ✔
 * var model = db.createModel() ✔
+* db.sql('SELECT * FROM table', onSuccess, on Error) ✔
 ###CLASS SCOPE
 * var obj = model.MyClass.getOneBy(fieldName, value, callback) ✔
 * var objs = model.MyClass.getManyBy(fieldName, value, callback) ✔
@@ -24,8 +25,8 @@ Javascript ORM and synchronisation tool with REST API
 * var obj = new model.MyClass() ✔
 * model.MyClass.update() ...
 ###OBJECT SCOPE 
-* obj.save() ✔/...
+* obj.save() ✔
 * obj.remove() ✔
-* obj.update() ...
-* var obj2 = obj.clone() ...
+* obj.update() ✔/...
+* var obj2 = obj.clone() ✔
 
