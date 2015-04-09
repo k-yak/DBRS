@@ -13,7 +13,7 @@ Javascript ORM and synchronisation tool with REST API
 * var dbs = dbrs.createDBs() ✔
 
 ###DB SCOPE
-* db.updateAll() ✔
+* db.updateAll() ... : change simple binding to two-way binding
 * db.clearAll() ✔
 * db.ping() ✔
 * db.dropTable(tableName) ✔
