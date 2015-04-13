@@ -4,6 +4,12 @@ Database REST Synchronise
 
 Javascript ORM and synchronisation tool with REST API
 
+##DEMO
+
+http://k-yak.github.io/DBRS/
+
+before do a getBy don't forget to create model
+
 ##TODO
 
 ###GLOBAL SCOPE
