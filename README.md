@@ -13,7 +13,7 @@ Javascript ORM and synchronisation tool with REST API
 * var dbs = dbrs.createDBs() ✔
 
 ###DB SCOPE
-* db.updateAll() ✔
+* db.updateAll() ... : change simple binding to two-way binding
 * db.clearAll() ✔
 * db.ping() ✔
 * db.dropTable(tableName) ✔
@@ -33,4 +33,6 @@ Javascript ORM and synchronisation tool with REST API
 * obj.remove() ✔
 * obj.update() ✔/...
 * var obj2 = obj.clone() ✔
-
+* foreign key : 1 - 1 + 1 - N + N - N ...
+* var obj2 = obj.relation //1 - 1 ...
+* var objTabl = obj.relations //X - N ...
