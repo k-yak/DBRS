@@ -413,9 +413,9 @@ define(["jquery", "dbrs.conf"], function($, inDBConf) {
         var self = this;
         self.DBRSdb.transaction(function (tx) {
             if(inDBConf.config.mode === 'verbose')
-                console.log('SELECT * FROM ' + self.DBRSTableName + 'WHERE DBRS_status <> "RMV"');
+                console.log('SELECT * FROM ' + self.DBRSTableName + ' WHERE DBRS_status <> "RMV"');
             
-            tx.executeSql('SELECT * FROM ' + self.DBRSTableName + 'WHERE DBRS_status <> "RMV"', [], function (tx, results) {
+            tx.executeSql('SELECT * FROM ' + self.DBRSTableName + ' WHERE DBRS_status <> "RMV"', [], function (tx, results) {
                 var ret = [];
                 var len = results.rows.length, i;
                 for(var i = 0 ; i < len; i++ ) {

@@ -6,6 +6,12 @@ require.config({
 });
 
 require(["jquery", "dbrs"], function($, dbrs) {
+    console.log = function(input) {
+        $('#console').append(JSON.stringify(input)+'\n');
+        $('#console').scrollTop($('#console')[0].scrollHeight);
+    }
+
+    
     var db, model, obj;
     $('#createDB').click(function(){
         db = dbrs.createDB('CRM');
@@ -49,6 +55,12 @@ require(["jquery", "dbrs"], function($, dbrs) {
             $('#searchvalue').val(),
             function(a){console.log(a);}
         );
+    });     
+    
+    $('#getAllButton').click(function(){
+        model.Ranges.getAll(
+            function(a){console.log(a);}
+        );
     });
     
     $('#save').click(function(){
@@ -63,6 +75,7 @@ require(["jquery", "dbrs"], function($, dbrs) {
         var obj2 = obj.clone();
         console.log(obj);
         console.log(obj2);
+        obj = obj2;
     });
     
     $('#createObject').click(function(){
