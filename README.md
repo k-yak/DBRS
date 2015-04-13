@@ -1,8 +1,15 @@
-# DBRS
+# DBRS v0.0.1
 
 Database REST Synchronise
 
-Javascript ORM and synchronisation tool with REST API
+Javascript ORM and synchronisation tool with REST API, based on WebSQL.
+
+You just have to configure one file (DBRS/scripts/dbrs.conf.js) describing :
+- database(s)
+- model = table(s)
+- requests to your API
+
+WARNING : work in progress (only get request on API).
 
 ##DEMO
 
