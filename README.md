@@ -19,7 +19,7 @@ before do a getBy don't forget to create model
 
 ##TODO
 
-###GLOBAL SCOPE
+###DBRS SCOPE
 * var db = dbrs.openDB(name) ✔
 * var dbs = dbrs.openDBs() ✔
 * var db = dbrs.createDB(name) ✔
