@@ -1,21 +1,21 @@
 {
-  "@odata.context":"http://vsrv-web/LGComWebAPI/odata/$metadata#SellerTypes","value":[
+  "@odata.context":"http://server/api/odata/$metadata#SellerTypes","value":[
     {
-      "id":1,"code":"LG1","name":"Appareil Locomoteur","isActive":false,"isCallCenter":false
+      "id":1,"code":"L1","name":"Aur","isActive":false,"isCallCenter":false
     },{
-      "id":2,"code":"LG2","name":"Rhumatologie","isActive":false,"isCallCenter":false
+      "id":2,"code":"L2","name":"Re","isActive":false,"isCallCenter":false
     },{
-      "id":3,"code":"LG3","name":"Dermatologie","isActive":false,"isCallCenter":false
+      "id":3,"code":"L3","name":"D","isActive":false,"isCallCenter":false
     },{
-      "id":4,"code":"LG4","name":"Fertilit\u00e9","isActive":false,"isCallCenter":false
+      "id":4,"code":"L4","name":"Fer","isActive":false,"isCallCenter":false
     },{
-      "id":5,"code":"VP","name":"Vendeurs Promogen","isActive":true,"isCallCenter":false
+      "id":5,"code":"VP","name":"Vengen","isActive":true,"isCallCenter":false
     },{
-      "id":6,"code":"CALL_ALLOGA","name":"Call Center Alloga","isActive":false,"isCallCenter":true
+      "id":6,"code":"CALGA","name":"Calga","isActive":false,"isCallCenter":true
     },{
-      "id":7,"code":"SIEGE","name":"Si\u00e8ge","isActive":true,"isCallCenter":false
+      "id":7,"code":"HOME","name":"ge","isActive":true,"isCallCenter":false
     },{
-      "id":8,"code":"CALL_PROMOGEN","name":"Call Center Promogen","isActive":true,"isCallCenter":true
+      "id":8,"code":"CALOGEN","name":"Calogen","isActive":true,"isCallCenter":true
     }
   ]
 }
